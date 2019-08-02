@@ -4,9 +4,9 @@ A web tool for create JSON Schema that used for JSON-Editor project
 
 ## Links
 
-[Tool online[English]](https://json.bootsphp.com/jsonSchemaCreator/)
+[JSON Schema Creator [English]](https://json.bootsphp.com/jsonSchemaCreator/)
 
-[Tool online[Chinese]](https://json.bootsphp.com/jsonSchemaCreator/zh.html)
+[JSON Schema Creator [Chinese]](https://json.bootsphp.com/jsonSchemaCreator/zh.html)
 
 #### Based on
 
