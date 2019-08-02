@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>JSON Schema 生成器</title>
+
+    <link rel='stylesheet' href="css/bootstrap-combined.min.css">
+    <link rel='stylesheet' href="css/font-awesome.css">
+
+    <script src='dist/jsoneditor.min.js'></script>
+    <script src="dist/lzstring.js"></script>
+    <script src="dist/zh.js"></script>
+</head>
+
+<body>
+<div class='container'>
+    <div class='row'>
+        <div class='span7 col-md-7 columns seven large-7'>
+            <h2>JSON Schema 编辑器</h2>
+            <p>
+                通过下方编辑器，生成JSON Schema。 可以直接发此<a href='#' id='direct_link'>URL</a>发送给他人 |
+                <a href="https://github.com/wclssdn/JSONSchemaCreator" target="_blank">Github</a> |
+                <a href="index.html">English</a>
+            </p>
+
+            <div id='editor'></div>
+
+            <h2>JSON Schema 输出</h2>
+            <p>
+                你也可以通过粘贴JSON Schema到下方，点击
+                <button class='btn btn-primary' id='setvalue'>加载JSON Schema</button>
+                到上方编辑器
+            </p>
+            <textarea id='output' style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
+        </div>
+        <div class='span5 col-md-5 columns five large-5'>
+            <h2>JSON Schema 生成的表单</h2>
+            <div id='editor_preview'></div>
+
+            <h2>表单生成的JSON</h2>
+            <p>
+                你可以通过输入json值，点击
+                <button class='btn btn-primary' id="setjson">Update Form</button>
+                查看Form表单填入值的效果
+            </p>
+            <textarea id="json" style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var schema;
+        if (window.location.href.match('[?&]schema=([^&]+)')) {
+            try {
+                schema = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]schema=([^&]+)')[1]));
+            } catch (e) {
+                console.log('invalid starting schema');
+            }
+        }
+
+        // Default starting schema
+        if (!schema) {
+            schema = window.jsonSchema
+        }
+
+        // Divs/textareas on the page
+        var $output = document.getElementById('output');
+        var $json = document.getElementById('json');
+        var $editor = document.getElementById('editor');
+
+        var $preview = document.getElementById('editor_preview');
+
+        // Buttons
+        var $set_value_button = document.getElementById('setvalue');
+        var $set_json_button = document.getElementById("setjson");
+
+        var jsoneditor, jsoneditorPreview;
+
+        var updateDirectLink = function () {
+            var url = window.location.href.replace(/\?.*/, '');
+            url += '?schema=' + LZString.compressToBase64(JSON.stringify(schema));
+            url += '&value=' + LZString.compressToBase64(JSON.stringify(jsoneditor.getValue()));
+            document.getElementById('direct_link').href = url;
+        };
+
+        var reload = function (keep_value) {
+            var startval = (jsoneditor && keep_value) ? jsoneditor.getValue() : window.startval;
+            window.startval = undefined;
+
+            if (jsoneditor) jsoneditor.destroy();
+            if (jsoneditorPreview) jsoneditorPreview.destroy();
+
+            jsoneditor = new JSONEditor($editor, {
+                schema: schema,
+                startval: startval,
+                show_errors: 'never',
+                theme: 'bootstrap2',
+                iconlib: 'fontawesome4'
+            });
+            window.jsoneditor = jsoneditor;
+
+            jsoneditorPreview = new JSONEditor($preview, {
+                schema: jsoneditor.getValue(),
+                theme: 'bootstrap2',
+                iconlib: 'fontawesome4'
+            });
+            window.jsoneditorPreview = jsoneditorPreview;
+
+            // When the value of the editor changes, update the JSON output
+            jsoneditor.on('change', function () {
+                var json = jsoneditor.getValue();
+
+                $output.value = JSON.stringify(json, null, 2);
+
+                if (jsoneditorPreview) jsoneditorPreview.destroy();
+
+                jsoneditorPreview = new JSONEditor($preview, {
+                    schema: jsoneditor.getValue(),
+                    theme: 'bootstrap2',
+                    iconlib: 'fontawesome4'
+                });
+
+                jsoneditorPreview.on('change', function () {
+                    $json.value = JSON.stringify(jsoneditorPreview.getValue(), null, 2);
+                });
+
+
+                window.jsoneditorPreview = jsoneditorPreview;
+
+                updateDirectLink();
+            });
+        };
+
+        $output.value = '';
+
+        // When the 'update schema' button is clicked, set the editor's value
+        $set_value_button.addEventListener('click', function () {
+            jsoneditor.setValue(JSON.parse($output.value));
+        });
+
+        // When the 'update form' button is clicked, set the preview editor's value
+        $set_json_button.addEventListener('click', function () {
+            jsoneditorPreview.setValue(JSON.parse($json.value));
+        });
+
+        // Get starting value from url
+        if (window.location.href.match('[?&]value=([^&]+)')) {
+            window.startval = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]value=([^&]+)')[1]));
+        }
+
+        reload();
+    })();
+</script>
+</body>
+
+</html>
