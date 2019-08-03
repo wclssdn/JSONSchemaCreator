@@ -38,14 +38,10 @@ window.jsonSchema = {
                         }
                     }
                 },
-                "default": {
-                    "type": "boolean"
-                },
                 "type": {
                     "enum": [
                         "boolean"
-                    ],
-                    "default": "boolean"
+                    ]
                 },
                 "enum": {
                     "items": {
@@ -58,6 +54,10 @@ window.jsonSchema = {
                         "select",
                         "checkbox"
                     ]
+                },
+                "default": {
+                    "type": "boolean",
+                    "propertyOrder": 10
                 }
             }
         },
@@ -159,9 +159,6 @@ window.jsonSchema = {
                         "yaml"
                     ]
                 },
-                "default": {
-                    "type": "string"
-                },
                 "minLength": {
                     "type": "integer",
                     "minimum": 0,
@@ -186,6 +183,10 @@ window.jsonSchema = {
                     "items": {
                         "type": "string"
                     }
+                },
+                "default": {
+                    "type": "string",
+                    "propertyOrder": 10
                 },
                 "media": {
                     "type": "object",
@@ -500,6 +501,7 @@ window.jsonSchema = {
                     "title": "超链接(links)",
                     "description": "可使用{{self}}表示当前字段的值",
                     "type": "array",
+                    "format": "table",
                     "items": {
                         "type": "object",
                         "title": "link",
@@ -516,11 +518,14 @@ window.jsonSchema = {
                                 "type": "string"
                             },
                             "download": {
-                                "oneOf": [{
-                                    "type": "boolean"
-                                }, {
-                                    "type": "string"
-                                }]
+                                "oneOf": [
+                                    {
+                                        "type": "boolean"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
                             },
                             "mediaType": {
                                 "type": "string"
@@ -707,10 +712,20 @@ window.jsonSchema = {
                     ]
                 },
                 "default": {
-                    "type": "array"
+                    "type": "array",
+                    "format": "table"
                 },
                 "items": {
-                    "$ref": "#/definitions/schema"
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/schema"
+                        },
+                        {
+                            "type": "array",
+                            "$ref": "#/definitions/schemaArray",
+                            "format": "tabs"
+                        }
+                    ]
                 },
                 "uniqueItems": {
                     "type": "boolean"
@@ -732,8 +747,10 @@ window.jsonSchema = {
                         "array",
                         "table",
                         "tabs",
+                        "tabs-top",
                         "checkbox",
-                        "select"
+                        "select",
+                        "categories"
                     ]
                 }
             }
