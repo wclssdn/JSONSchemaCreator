@@ -41,7 +41,8 @@ window.jsonSchema = {
                 "type": {
                     "enum": [
                         "boolean"
-                    ]
+                    ],
+                    "default": "boolean"
                 },
                 "enum": {
                     "items": {
