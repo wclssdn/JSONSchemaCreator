@@ -169,6 +169,7 @@ window.jsonSchema = {
                 },
                 "media": {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "type": {
                             "type": "string"
@@ -355,6 +356,9 @@ window.jsonSchema = {
                         "disable_array_delete": {
                             "type": "boolean"
                         },
+                        "enable_array_copy": {
+                            "type": "boolean"
+                        },
                         "disable_array_delete_all_rows": {
                             "type": "boolean"
                         },
@@ -376,7 +380,7 @@ window.jsonSchema = {
                 },
                 "default": {
                     "type": "array",
-                    "format": "table"
+                    "format": "tabs-top"
                 },
                 "items": {
                     "oneOf": [
@@ -426,7 +430,6 @@ window.jsonSchema = {
                 "type"
             ],
             "required": ["type"],
-
             "properties": {
                 "type": {
                     "propertyOrder": 1,
@@ -451,7 +454,6 @@ window.jsonSchema = {
                     "type": "string",
                     "propertyOrder": 4
                 },
-
                 "enum": {
                     "type": "array",
                     "minItems": 1,
@@ -484,6 +486,7 @@ window.jsonSchema = {
                                     {
                                         "title": "Source",
                                         "type": "object",
+                                        "additionalProperties": false,
                                         "required": [
                                             "source"
                                         ],
@@ -505,6 +508,7 @@ window.jsonSchema = {
                                                         "items": {
                                                             "title": "value",
                                                             "type": "object",
+                                                            "additionalProperties": false,
                                                             "properties": {
                                                                 "value": {
                                                                     "type": "string"
@@ -567,6 +571,7 @@ window.jsonSchema = {
                     "items": {
                         "type": "object",
                         "title": "link",
+                        "additionalProperties": false,
                         "properties": {
                             "rel": {
                                 "type": "string"
@@ -650,30 +655,37 @@ window.jsonSchema = {
             "oneOf": [
                 {
                     "title": "Object",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/object"
                 },
                 {
                     "title": "Array",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/array"
                 },
                 {
                     "title": "String",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/string"
                 },
                 {
                     "title": "Number",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/number"
                 },
                 {
                     "title": "Integer",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/integer"
                 },
                 {
                     "title": "Boolean",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/boolean"
                 },
                 {
                     "title": "Null",
+                    "additionalProperties": false,
                     "$ref": "#/definitions/null"
                 }
             ]
