@@ -25,9 +25,10 @@
 <div class='container-fluid'>
     <div class='row'>
         <div class='span6 col-md-6 columns six large-6 col s6'>
-            <h2>Creator</h2>
+            <h2>JSON Schema Creator</h2>
             <p>
                 Better way to build forms |
+                <a href="zh.html">中文版</a> |
                 <a href="https://github.com/wclssdn/JSONSchemaCreator" target="_blank">Github</a> |
                 <a href="https://github.com/json-editor/json-editor" target="_blank">JSON Editor</a>
             </p>
@@ -37,7 +38,7 @@
             <h2>JSON Schema Output</h2>
             <p>
                 You can also make changes to the JSON here and set the value in the Creator by clicking
-                <button class='btn btn-primary' id='setvalue2creator'>Update Creator</button>
+                <button class='btn btn-primary btn-xs' id='setvalue2creator'>Update Creator</button>
             </p>
             <textarea id='creator-output' style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
 
@@ -61,7 +62,7 @@
             <h2>JSON Output</h2>
             <p>
                 You can also make changes to the JSON here and set the value in the editor by clicking
-                <button class='btn btn-primary' id='setvalue'>Update Form</button>
+                <button class='btn btn-primary btn-xs' id='setvalue'>Update Form</button>
             </p>
             <textarea id='output' style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
 
@@ -132,7 +133,10 @@
 <p>&nbsp;</p>
 <script>
     (function () {
-        var schema = {};
+        var schema = {
+            "title": "A Object",
+            "properties": {}
+        };
         if (window.location.href.match('[?&]schema=([^&]+)')) {
             try {
                 schema = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]schema=([^&]+)')[1]));

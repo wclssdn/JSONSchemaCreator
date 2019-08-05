@@ -1,85 +1,344 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <title>JSON Schema 生成器</title>
 
-    <link rel='stylesheet' href="css/bootstrap-combined.min.css">
-    <link rel='stylesheet' href="css/font-awesome.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon"
+          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABL1BMVEUAAACDg4OAgICFfn+AgICAgICAgICAgICAgYGAgICBgICAgICBgICBgICAgICAgICPeHgz3rWAgYCAgYCAgICAgICAgICAgICAgICAgIB4iIOBgYGAgICAgICAgICBgYGAgIB/gIB+fHyBgYEz3rSAgYGAgICBgYGBfn+AgYCBgYF9g4Az3rUz3bR+hYKBgYGBgYF/f38y37Z/f3+AgIAR8riBgIF7ioWBgYGAgIB/f39prJiAgYAY5rqAgIAP6LtA1LF+goKBfX403rQ03bQy3rQy37V6joiAgIA03bQy3rUw4bUu4bYQ6LsK6LtvoZJorZkd5blHz6sA776EdXyeAEafADWJiYmFhIWGhoaAgIAz37SCgoKDg4M04reLi4s47cCPj4+TlJM69cc357x1W7pfAAAAV3RSTlMABboD/fqn9eikRarv2dTFCOjk4L+el5FXMRMO68mvb0ArGvLu2s1+XlMmF/r68nZnWj83HwbQy8mLeG1lVlBMSRv43tzT0by3tLKQj3x7enZqTy8kHRixlP99AAACK0lEQVQ4y31TZ3PiMBRcgYTBNja9917Sey/Xe7+TZFwgyf//DQdMGHCYZEcfpNFq9+3oPfhBZut5BAnwEoMAecPIv3Bd0LhW4aHiVGpdPQh0RXIfqLXz8/OaeV+nO0AmgynyKkCCPvV6h2cIdsOch3PAziQw8FVbjHDzFghwmzGba0A+yjPFpcG2XVJRaOCDZ1FqeRoOYsg1rWrwUT/Lq8C2UurhKuw4CRXVpr4DnPEsyJyQiiCX4JbNzcYwnCjUjdneqCGSeiQEImCcWVS5ayMWxNadQinzwggFloSwTaevAv8Ov3w+/Jvi01Kctp/gUEvJ4TI+Hscv0WMWE1EfgdmKLOPjvbu56d5/QlIoYtUihAoXTvkw7m6MRhtuvBB1JM9AWxBSFWD/6M7Am4fRFG58T5+kBlgqRLLYVnGh4rU7mqG11+ujd7FQAGIYOl7ltoH4eHNqMW7tFerlyaKGORq6JUXpz+93Y9d9ePvzvCmFvZIie0YUm9nNfdx8bbW+/br58cof09RiwlKkCXPr/Pr6+9YxokKRpZWYaaSlECckIcX7Y8mPSNKRtIv04i/SMoe6OTHQdpgQTHRQ4pED7Mr0IsWpjA6wqyJpU0qZY6CvAjl+GsMCBwFPCwJJj1FGJ5159GLD15NqQnZRrHAhRYagymoAiL+rq5auopYsD1BLOF3ib/w5u5jmJ0NgaPJQ4ZnJqpe9bNbr5H3qfp8rXe/7ZmZt/gh5Mpj/ATcGWEd0tvkLAAAAAElFTkSuQmCC"/>
 
-    <script src='dist/jsoneditor.min.js'></script>
+    <link rel='stylesheet' href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+    <style>[class*="foundicon-"] {
+        font-family: GeneralFoundicons;
+        font-style: normal;
+    }</style>
+
     <script src="dist/zh.js"></script>
+    <script src="dist/jsoneditor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
 </head>
 
 <body>
-<div class='container'>
+<p>&nbsp;</p>
+<div class='container-fluid'>
     <div class='row'>
-        <div class='span7 col-md-7 columns seven large-7'>
-            <h2>JSON Schema 编辑器（有bug，先用英文版吧）</h2>
+        <div class='span6 col-md-6 columns six large-6 col s6'>
+            <h2>JSON Schema 生成器</h2>
             <p>
-                通过下方编辑器，生成JSON Schema。 可以直接发此<a href='#' id='direct_link'>URL</a>发送给他人 |
+                通过本工具生成<code>JSON Schema</code> |
+                <a href="index.html">English</a> |
                 <a href="https://github.com/wclssdn/JSONSchemaCreator" target="_blank">Github</a> |
-                <a href="index.html">English</a>
+                <a href="https://github.com/json-editor/json-editor" target="_blank">JSON Editor</a>
             </p>
+
+            <div id='creator'></div>
+
+            <h2>JSON Schema</h2>
+            <p>
+                此文本框内容为生成器生成的JSON Schema。你也可以点击
+                <button class='btn btn-primary btn-xs' id='setvalue2creator'>加载到编辑器</button>
+                让编辑器加载任意JSON Schema
+            </p>
+            <textarea id='creator-output' style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
+
+            <h2>验证</h2>
+            <p>如果JSON Schema有问题，错误信息会展示在下方</p>
+            <textarea id='creatorValidate' style='width: 100%; height: 100px; font-family: monospace;' readonly disabled class='form-control'></textarea>
+        </div>
+
+        <div class='span6 col-md-6 columns six large-6 col s6'>
+            <div>
+                <a href='#' id='direct_link'>当前页面链接</a> (包含schema、值、选项) |
+                <a href='#' id="reset_link">重置当前页面链接</a> |
+                <a href='#' id="example_link">例子</a>
+            </div>
+
+            <h2>Form</h2>
+            <p>由左方生成器生成的<code>JSON Schema</code>渲染而来</p>
 
             <div id='editor'></div>
 
-            <h2>JSON Schema 输出</h2>
+            <h2>JSON Output</h2>
             <p>
-                你也可以通过粘贴JSON Schema到下方，点击
-                <button class='btn btn-primary' id='setvalue'>加载JSON Schema</button>
-                到上方编辑器
+                由上方表单生成的json。你也可以点击
+                <button class='btn btn-primary btn-xs' id='setvalue'>更新表单</button>
+                让表单展示给定的值
             </p>
             <textarea id='output' style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
-        </div>
-        <div class='span5 col-md-5 columns five large-5'>
-            <h2>JSON Schema 生成的表单</h2>
-            <div id='editor_preview'></div>
 
-            <h2>表单生成的JSON</h2>
-            <p>
-                你可以通过输入json值，点击
-                <button class='btn btn-primary' id="setjson">Update Form</button>
-                查看Form表单填入值的效果
-            </p>
-            <textarea id="json" style='width: 100%; height: 300px; font-family: monospace;' class='form-control'></textarea>
+            <h2>选项</h2>
+            <div id='options_holder'>
+                <div>
+                    <label>对象布局方式</label>
+                    <select id='object_layout' class='form-control browser-default'>
+                        <option value='normal'>按行展示(normal)</option>
+                        <option value='grid'>网格方式(grid)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>显示错误时机</label>
+                    <select id='show_errors' class='form-control browser-default'>
+                        <option value='interaction'>交互时</option>
+                        <option value='change'>变化时</option>
+                        <option value='always'>总是</option>
+                        <option value='never'>总不</option>
+                    </select>
+                </div>
+                <div>
+                    <label>开关选项</label>
+                    <select multiple size="9" id="boolean_options" style="width: 100%; height: inherit;" class="form-control browser-default">
+                        <option value=''>不选择</option>
+                        <option value='required_by_default'>对象属性默认全部必选(required_by_default=false)</option>
+                        <option value='display_required_only'>默认只展示必选字段(display_required_only=false)</option>
+                        <option value='no_additional_properties'>不允许新增属性(no_additional_properties)</option>
+                        <option value='ajax'>允许通过ajax加载远程schema(ajax)</option>
+                        <option value='disable_edit_json'>隐藏直接编辑JSON按钮(disable_edit_json)</option>
+                        <option value='disable_collapse'>隐藏折叠按钮(disable_collapse)</option>
+                        <option value='disable_properties'>隐藏编辑属性按钮(disable_properties)</option>
+                        <option value='disable_array_add'>隐藏新增数组元素按钮(disable_array_add)</option>
+                        <option value='disable_array_reorder'>隐藏数组排序按钮(disable_array_reorder)</option>
+                        <option value='disable_array_delete'>隐藏删除数组元素按钮(disable_array_delete)</option>
+                        <option value='enable_array_copy'>添加数组元素复制按钮(enable_array_copy)</option>
+                        <option value='array_controls_top'>数组控制按钮展示在上方(array_controls_top)</option>
+                        <option value='disable_array_delete_all_rows'>隐藏删除全部数组元素按钮(disable_array_delete_all_rows)</option>
+                        <option value='disable_array_delete_last_row'>隐藏删除最后一个数组元素按钮(disable_array_delete_last_row)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>加载额外的库</label>
+                    <select multiple size="8" id='lib_switcher' style="width: 100%; height: inherit;" class='form-control browser-default'>
+                        <option value=''>不选择</option>
+                        <option value='ace_editor'>Ace Editor(代码高亮)</option>
+                        <option value='choices'>Choices(选择列表强化)</option>
+                        <option value='sceditor'>SCEditor</option>
+                        <option value='simplemde'>SimpleMDE</option>
+                        <option value='select2'>Select2(选择列表强化)</option>
+                        <option value='selectize'>Selectize(选择列表强化)</option>
+                        <option value='flatpickr'>Flatpickr(日期选择强化)</option>
+                        <option value='signature_pad'>Signature Pad</option>
+                        <option value='mathjs'>Math.js</option>
+                        <option value='cleavejs'>Cleave.js(信用卡信息)</option>
+                    </select>
+                </div>
+            </div>
+
+            <h2>验证</h2>
+            <p>如果表单的JSON Schema有问题，错误信息会展示在下方</p>
+            <textarea id='validate' style='width: 100%; height: 100px; font-family: monospace;' readonly disabled class='form-control'></textarea>
         </div>
     </div>
 </div>
+<p>&nbsp;</p>
 <script>
     (function () {
-        var schema;
+        var schema = {
+            "title": "一个对象",
+            "properties": {}
+        };
         if (window.location.href.match('[?&]schema=([^&]+)')) {
             try {
                 schema = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]schema=([^&]+)')[1]));
             } catch (e) {
                 console.log('invalid starting schema');
             }
+        }else if(window.location.href.match('\\?example')){
+            schema = {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "First and Last name",
+                        "minLength": 4,
+                        "default": "Jeremy Dorn"
+                    },
+                    "age": {
+                        "type": "integer",
+                        "default": 25,
+                        "minimum": 18,
+                        "maximum": 99
+                    },
+                    "favorite_color": {
+                        "title": "favorite color",
+                        "type": "string",
+                        "format": "color",
+                        "default": "#ffa500"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "options": {
+                            "flatpickr": {}
+                        }
+                    },
+                    "location": {
+                        "properties": {
+                            "city": {
+                                "type": "string",
+                                "default": "San Francisco"
+                            },
+                            "state": {
+                                "type": "string",
+                                "default": "CA"
+                            },
+                            "city_state": {
+                                "type": "string",
+                                "description": "This is generated automatically from the previous two fields",
+                                "template": "{{city}}, {{state}}",
+                                "watch": {
+                                    "city": "location.city",
+                                    "state": "location.state"
+                                }
+                            }
+                        },
+                        "title": "Location",
+                        "type": "object",
+                        "required": [
+                            "city",
+                            "state",
+                            "city_state"
+                        ]
+                    },
+                    "pets": {
+                        "items": {
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "cat",
+                                        "dog",
+                                        "bird",
+                                        "reptile",
+                                        "other"
+                                    ],
+                                    "default": "dog"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "title": "Pet",
+                            "type": "object"
+                        },
+                        "title": "Pets",
+                        "type": "array",
+                        "format": "tabs-top",
+                        "uniqueItems": true,
+                        "default": [
+                            {
+                                "type": "dog",
+                                "name": "Walter"
+                            },
+                            {
+                                "type": "cat",
+                                "name": "Nicky"
+                            }
+                        ]
+                    }
+                },
+                "title": "Person",
+                "type": "object",
+                "required": [
+                    "date",
+                    "name",
+                    "age",
+                    "favorite_color",
+                    "gender",
+                    "location",
+                    "pets"
+                ]
+            }
         }
-
-        // Default starting schema
-        if (!schema) {
-            schema = window.jsonSchema
+        if (window.location.href.match('[?&]value=([^&]+)')) {
+            try {
+                window.startval = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]value=([^&]+)')[1]));
+            } catch (e) {
+                console.log('invalid starting startval');
+            }
         }
 
         // Divs/textareas on the page
         var $output = document.getElementById('output');
-        var $json = document.getElementById('json');
+        var $creator = document.getElementById('creator');
+        var $creatorOutput = document.getElementById('creator-output');
+        var $creatorValidate = document.getElementById('creatorValidate');
         var $editor = document.getElementById('editor');
-
-        var $preview = document.getElementById('editor_preview');
+        var $validate = document.getElementById('validate');
 
         // Buttons
         var $set_value_button = document.getElementById('setvalue');
-        var $set_json_button = document.getElementById("setjson");
+        var $setvalue2creator = document.getElementById('setvalue2creator');
+        var $resetLink = document.getElementById('reset_link');
+        var $exampleLink = document.getElementById('example_link');
 
-        var jsoneditor, jsoneditorPreview;
+        var jsoneditor;
+        var schemaCreator;
+
+        // Function for loading external javascript(s) during runtime
+        var loadScripts = function (urls, lib) {
+
+            var head = document.getElementsByTagName('head')[0],
+                scripts = Array.prototype.slice.call(head.getElementsByTagName('script')).map(function (key) {
+                    return key.src.toLowerCase();
+                });
+
+            if (typeof urls == 'string') urls = [urls];
+
+            return new Promise(
+                function (resolve, reject) {
+                    for (var i = 0; i < urls.length; i++) {
+
+                        if (scripts.indexOf(urls[i].toLowerCase()) == -1) {
+                            var script = document.createElement('script');
+                            script.classList.add('external_' + lib)
+                            script.type = 'text/javascript';
+                            script.src = urls[i];
+                            script.async = false;
+
+                            // If last script, bind the callback event to resolve
+                            if (i == urls.length - 1) {
+                                // Multiple binding for browser compatibility
+                                script.onreadystatechange = resolve;
+                                script.onload = resolve;
+                            }
+
+                            // Fire the loading
+                            head.appendChild(script);
+                        }
+
+                    }
+                }
+            );
+        };
 
         var updateDirectLink = function () {
             var url = window.location.href.replace(/\?.*/, '');
+
             url += '?schema=' + LZString.compressToBase64(JSON.stringify(schema));
             url += '&value=' + LZString.compressToBase64(JSON.stringify(jsoneditor.getValue()));
+
+            var libs = document.getElementById('lib_switcher').querySelectorAll(':checked');
+            var result = Object.keys(libs).map(function (key) {
+                return libs[key].value;
+            });
+            url += '&lib_switcher=' + result.join(',');
+
+            for (var i in JSONEditor.defaults.options) {
+                if (!JSONEditor.defaults.options.hasOwnProperty(i)) continue;
+                if (JSONEditor.defaults.options[i] === false) {
+                } else if (JSONEditor.defaults.options[i] === true) {
+                    url += '&' + i;
+                } else {
+                    url += '&' + i + '=' + JSONEditor.defaults.options[i];
+                }
+            }
             document.getElementById('direct_link').href = url;
         };
 
@@ -88,69 +347,224 @@
             window.startval = undefined;
 
             if (jsoneditor) jsoneditor.destroy();
-            if (jsoneditorPreview) jsoneditorPreview.destroy();
 
+            // form
             jsoneditor = new JSONEditor($editor, {
-                schema: schema,
-                startval: startval,
-                show_errors: 'never',
-                theme: 'bootstrap2',
-                iconlib: 'fontawesome4'
+                schema: schemaCreator.getValue(),
+                startval: startval
             });
+
             window.jsoneditor = jsoneditor;
 
-            jsoneditorPreview = new JSONEditor($preview, {
-                schema: jsoneditor.getValue(),
-                theme: 'bootstrap2',
-                iconlib: 'fontawesome4'
-            });
-            window.jsoneditorPreview = jsoneditorPreview;
-
-            // When the value of the editor changes, update the JSON output
+            // When the value of the editor changes, update the JSON output and validation message
             jsoneditor.on('change', function () {
                 var json = jsoneditor.getValue();
 
                 $output.value = JSON.stringify(json, null, 2);
 
-                if (jsoneditorPreview) jsoneditorPreview.destroy();
-
-                jsoneditorPreview = new JSONEditor($preview, {
-                    schema: jsoneditor.getValue(),
-                    theme: 'bootstrap2',
-                    iconlib: 'fontawesome4'
-                });
-
-                jsoneditorPreview.on('change', function () {
-                    $json.value = JSON.stringify(jsoneditorPreview.getValue(), null, 2);
-                });
-
-
-                window.jsoneditorPreview = jsoneditorPreview;
+                var validation_errors = jsoneditor.validate();
+                // Show validation errors if there are any
+                if (validation_errors.length) {
+                    $validate.value = JSON.stringify(validation_errors, null, 2);
+                } else {
+                    $validate.value = '验证通过';
+                }
 
                 updateDirectLink();
+
+                // Materialize extra.
+                if (window.Materialize) window.Materialize.updateTextFields();
             });
         };
 
+        // Start the schema and output textareas with initial values
         $output.value = '';
 
-        // When the 'update schema' button is clicked, set the editor's value
+        $resetLink.addEventListener('click', function () {
+            $resetLink.href = $resetLink.href.substring(0, $resetLink.href.indexOf('?'));
+        });
+
+        $exampleLink.addEventListener('click', function () {
+            $exampleLink.href = $exampleLink.href.substring(0, $exampleLink.href.indexOf('?')) + '?example';
+        });
+
+        // update creator value
+        $setvalue2creator.addEventListener('click', function () {
+            schemaCreator.setValue(JSON.parse($creatorOutput.value));
+        });
+
+        // When the 'update form' button is clicked, set the editor's value
         $set_value_button.addEventListener('click', function () {
             jsoneditor.setValue(JSON.parse($output.value));
         });
 
-        // When the 'update form' button is clicked, set the preview editor's value
-        $set_json_button.addEventListener('click', function () {
-            jsoneditorPreview.setValue(JSON.parse($json.value));
+
+        // Set the external library inclusion
+        var setExternalLib = function (lib_name, no_reload) {
+            lib_name = lib_name || '';
+            var scriptMapping = {
+                ace_editor: "https://cdn.jsdelivr.net/npm/ace-editor-builds@1.2.4/src-min-noconflict/ace.js",
+                choices: "https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js",
+                cleavejs: "https://cdn.jsdelivr.net/npm/cleave.js@1.4.7/dist/cleave.min.js",
+                sceditor: [
+                    "https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js",
+                    "https://cdn.jsdelivr.net/npm/sceditor@2.1.3/minified/sceditor.min.js",
+                    "https://cdn.jsdelivr.net/npm/sceditor@2.1.3/minified/formats/bbcode.js",
+                    "https://cdn.jsdelivr.net/npm/sceditor@2.1.3/minified/formats/xhtml.js"
+                ],
+                simplemde: "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js",
+                select2: [
+                    "https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js",
+                    "https://cdn.jsdelivr.net/npm/select2@4.0.6-rc.1/dist/js/select2.min.js"
+                ],
+                selectize: "https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js",
+                flatpickr: "https://cdn.jsdelivr.net/npm/flatpickr",
+                signature_pad: "https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js",
+                mathjs: "https://cdn.jsdelivr.net/npm/mathjs@5.3.1/dist/math.min.js"
+            };
+
+            var styleMapping = {
+                choices: "https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css",
+                sceditor: "https://cdn.jsdelivr.net/npm/sceditor@2.1.3/minified/themes/default.min.css",
+                select2: "https://cdn.jsdelivr.net/npm/select2@4.0.6-rc.1/dist/css/select2.min.css",
+                selectize: [
+                    "https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.min.css",
+                    "https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.min.css"
+                ],
+                simplemde: "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css",
+                flatpickr: "https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+            };
+
+            var libScripts = scriptMapping[lib_name], libStyles = styleMapping[lib_name], head = document.getElementsByTagName('head')[0], style;
+
+            if (typeof libStyles == 'string') {
+                libStyles = [libStyles];
+            }
+            if (Array.isArray(libStyles)) {
+                for (var i = 0; i < libStyles.length; i++) {
+                    style = document.createElement('link');
+                    style.setAttribute('rel', 'stylesheet');
+                    style.setAttribute('type', 'text/css');
+                    style.setAttribute('href', libStyles[i]);
+                    style.classList.add('external_' + lib_name);
+                    head.appendChild(style);
+                }
+            }
+
+            if (libScripts !== undefined) {
+                loadScripts(libScripts, lib_name).then(
+                    function (val) {
+                        switch (lib_name) {
+                            case 'selectize':
+                                JSONEditor.plugins.selectize.enable = true;
+                                break;
+                        }
+
+                        if (!no_reload) {
+                            reload(true);
+                        }
+                    }
+                ).catch(
+                    function (reason) {
+                        console.log('Error loading script: ', reason)
+                    }
+                );
+            }
+        };
+
+        var refreshBooleanOptions = function (no_reload) {
+            var boolean_options = document.getElementById('boolean_options').children;
+            for (var i = 0; i < boolean_options.length; i++) {
+                JSONEditor.defaults.options[boolean_options[i].value] = boolean_options[i].selected;
+            }
+            if (!no_reload) reload(true);
+        };
+
+        // Change listeners for options
+        document.getElementById('lib_switcher').addEventListener('change', function () {
+            var selected = this.querySelectorAll(':checked'),
+                unselected = this.querySelectorAll(':not(:checked)');
+
+            for (var i = 0; i < unselected.length; i++) {
+                var els = document.getElementsByTagName('head')[0].getElementsByClassName('external_' + unselected[i].value);
+                for (var j = els.length - 1; j >= 0; j--) {
+                    if (unselected[i].value === 'selectize') JSONEditor.plugins.selectize.enable = false;
+                    els[j].parentNode.removeChild(els[j]);
+                }
+            }
+
+            for (var i = 0; i < selected.length; i++) {
+                if (selected[i].value === 'selectize') JSONEditor.plugins.selectize.enable = true;
+                setExternalLib(selected[i].value);
+            }
+        });
+        document.getElementById('object_layout').addEventListener('change', function () {
+            JSONEditor.defaults.options.object_layout = this.value;
+            reload(true);
+        });
+        document.getElementById('show_errors').addEventListener('change', function () {
+            JSONEditor.defaults.options.show_errors = this.value;
+            reload(true);
+        });
+        document.getElementById('boolean_options').addEventListener('change', function () {
+            refreshBooleanOptions();
         });
 
-        // Get starting value from url
-        if (window.location.href.match('[?&]value=([^&]+)')) {
-            window.startval = JSON.parse(LZString.decompressFromBase64(window.location.href.match('[?&]value=([^&]+)')[1]));
+        JSONEditor.defaults.options.theme = 'bootstrap3';
+        JSONEditor.defaults.options.iconlib = 'fontawesome4';
+
+        document.getElementById('object_layout').value = (window.location.href.match(/[?&]object_layout=([^&]+)/) || [])[1] || 'normal';
+        JSONEditor.defaults.options.object_layout = document.getElementById('object_layout').value;
+
+        document.getElementById('show_errors').value = (window.location.href.match(/[?&]show_errors=([^&]+)/) || [])[1] || 'interaction';
+        JSONEditor.defaults.options.show_errors = document.getElementById('show_errors').value;
+
+        var lib_switcher = document.getElementById('lib_switcher');
+        var lib_switcher_values = ((window.location.href.match(/[?&]lib_switcher=([^&]+)/) || [])[1] || '');
+        if (lib_switcher_values != '') {
+            lib_switcher_values = lib_switcher_values.split(',');
+            for (var i = 0; i < lib_switcher.options.length; i++) {
+                lib_switcher.options[i].selected = (lib_switcher_values.indexOf(lib_switcher.options[i].value) > -1);
+                if (lib_switcher.options[i].selected) setExternalLib(lib_switcher.options[i].value);
+            }
         }
+
+        var boolean_options = document.getElementById('boolean_options').children;
+        for (var i = 0; i < boolean_options.length; i++) {
+            if (window.location.href.match(new RegExp('[?&]' + boolean_options[i].getAttribute('value') + '([&=]|$)'))) {
+                boolean_options[i].selected = true;
+            }
+        }
+        refreshBooleanOptions(true);
+
+        // creator
+        schemaCreator = new JSONEditor($creator, {
+            array_controls_top: true,
+            enable_array_copy: true,
+            schema: window.jsonSchema,
+            startval: schema
+        });
+        window.schemaCreator = schemaCreator;
+        // When the value of the creator changes, update the JSON Schema output and form schema
+        schemaCreator.on('change', function () {
+            schema = schemaCreator.getValue();
+            $creatorOutput.value = JSON.stringify(schema, null, 2);
+            var validation_errors = schemaCreator.validate();
+            // Show validation errors if there are any
+            if (validation_errors.length) {
+                $creatorValidate.value = JSON.stringify(validation_errors, null, 2);
+            } else {
+                $creatorValidate.value = '验证通过';
+            }
+            updateDirectLink();
+            // Materialize extra.
+            if (window.Materialize) window.Materialize.updateTextFields();
+            // reload form
+            reload(true);
+        });
 
         reload();
     })();
 </script>
 </body>
-
 </html>
