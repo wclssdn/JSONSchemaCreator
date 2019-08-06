@@ -323,6 +323,14 @@ window.jsonSchema = {
                 "additionalProperties": {
                     "type": "boolean"
                 },
+                "defaultProperties": {
+                    "type": "array",
+                    "format": "table",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "required": {
                     "type": "array",
                     "uniqueItems": true,

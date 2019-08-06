@@ -86,8 +86,8 @@
                 </div>
                 <div>
                     <label>Boolean options</label>
-                    <select multiple size="9" id="boolean_options" style="width: 100%; height: inherit;"
-                            class="form-control browser-default">
+                    <select multiple size="9" id="boolean_options" style="width: 100%; height: inherit;" class="form-control browser-default">
+                        <option value='none'>None</option>
                         <option value='required_by_default'>Object properties required by default</option>
                         <option value='display_required_only'>Only show required properties by default</option>
                         <option value='no_additional_properties'>No additional object properties</option>
@@ -105,11 +105,9 @@
                     </select>
                 </div>
                 <div>
-                    <label title="It's recommended that you click the Direct Link after changing these options">Include
-                        External Library</label>
-                    <select multiple size="8" id='lib_switcher' style="width: 100%; height: inherit;"
-                            class='form-control browser-default'
-                            title="It's reccomended that you click the Direct Link after changing these options">
+                    <label title="It's recommended that you click the Direct Link after changing these options">Include External Library</label>
+                    <select multiple size="8" id='lib_switcher' style="width: 100%; height: inherit;" class='form-control browser-default' title="It's reccomended that you click the Direct Link after changing these options">
+                        <option value='none'>None</option>
                         <option value='ace_editor'>Ace Editor</option>
                         <option value='choices'>Choices</option>
                         <option value='sceditor'>SCEditor</option>
@@ -143,7 +141,7 @@
             } catch (e) {
                 console.log('invalid starting schema');
             }
-        }else if(window.location.href.match('\\?example')){
+        } else if (window.location.href.match('\\?example')) {
             schema = {
                 "properties": {
                     "name": {

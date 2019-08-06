@@ -361,6 +361,18 @@ window.jsonSchema = {
                     "description": "是否允许新增属性",
                     "type": "boolean"
                 },
+                "defaultProperties": {
+                    "title": "默认展示属性列表(defaultProperties)",
+                    "description": "可设置哪些属性默认展示，未展示的需要通过点击属性按钮勾选后才展示",
+                    "type": "array",
+                    "format": "table",
+                    "uniqueItems": true,
+                    "items": {
+                        "title": "属性名",
+                        "description": "仅当前对象的属性",
+                        "type": "string"
+                    }
+                },
                 "required": {
                     "title": "必选字段列表(required)",
                     "type": "array",
